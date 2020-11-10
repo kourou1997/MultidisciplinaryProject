@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Smart Greenhouse</string>
+
+    <string-array name="seralar">
+        <item>Sera 1</item>
+        <item>Sera 2</item>
+        <item>Sera 3</item>
+    </string-array>
+
+    <string-array name="sera_properties">
+        <item>Bu sera 1.</item>
+        <item>Bu sera 2.</item>
+        <item>Bu sera 3.</item>
+    </string-array>
+</resources>
