@@ -11,9 +11,11 @@ import com.cdtp.smartgreenhouse.R;
 
 public class MainActivity extends AppCompatActivity {
 
+    //Data server'dan alınacak, şimdilik test array'i verildi
     Sera sera[] = {new Sera("Sera 1", "Sera sıcaklığı düşük.", R.drawable.sera_1, 21.0),
                     new Sera("Sera 2", "Sera optimal durumda.", R.drawable.sera_2, 22.0),
                     new Sera("Sera 3", "Sera sıcaklığı yüksek.", R.drawable.sera_3, 45.0)};
+
     RecyclerView recyclerView;
     String seralar[], sera_descriptions[];
     int images[];
