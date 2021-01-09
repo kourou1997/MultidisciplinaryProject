@@ -1,12 +1,13 @@
 package com.cdtp.smartgreenhouse.Controllers;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,30 +23,203 @@ import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import org.json.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
 
 public class DetailActivity extends AppCompatActivity implements OnChartGestureListener, OnChartValueSelectedListener {
 
-    List<Double> valueList = Arrays.asList(15.2, 15.7, 15.9, 18.9, 19.5, 20.2, 21.3, 23.7);
+    public static ArrayList<Double> valueList = new ArrayList<Double>();
 
     private LineChart chart;
     private TextView title, description, temperature;
     private SeekBar seekBar;
+// ...
 
-    @Override
+    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+
+
+
+
+        @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         title = findViewById(R.id.detailSeraTextView);
         description = findViewById(R.id.detailSeraPropertiesTextView);
         temperature = findViewById(R.id.detailsTemperatureTextView);
         Button setTempButton = findViewById(R.id.tempSetButton);
+        String sera_ismi = "";
 
-        seekBar = findViewById(R.id.tempSeekBar);
+
+
+
+
+
+        Query data = null;
+        Query update = null;
+
+
+
+        //HALİHAZIRDA OLAN DEĞERLERİ EKLEMEK İÇİN
+        if(getIntent().getStringExtra("sera").equals("Sera 1")){
+            sera_ismi = "sera1";
+            data = mDatabase.child("sera1").orderByKey().limitToLast(10);
+            data.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    valueList.clear();
+                    if(snapshot.getValue() != null){
+                        System.out.println(snapshot.getValue().toString());
+                        getSetData();
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        } else if (getIntent().getStringExtra("sera").equals("Sera 2")) {
+            sera_ismi = "sera2";
+            data = mDatabase.child("sera2").orderByKey().limitToLast(10);
+            data.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    valueList.clear();
+                    if(snapshot.getValue() != null){
+                        System.out.println(snapshot.getValue().toString());
+                        getSetData();
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        } else if (getIntent().getStringExtra("sera").equals("Sera 3")) {
+            sera_ismi = "sera3";
+            data = mDatabase.child("sera3").orderByKey().limitToLast(10);
+            data.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    valueList.clear();
+                    if(snapshot.getValue() != null){
+                        System.out.println(snapshot.getValue().toString());
+                        getSetData();
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
+
+            final String finalSera_ismi = sera_ismi;
+            setTempButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    double wantedTemp = Double.parseDouble(temperature.getText().toString().substring(0, 4));
+                    switch(finalSera_ismi){
+                        case "sera1":
+                        {
+                            mDatabase.child("istenen_sicaklik").child("-MQbYfmvGT9Vu1bxxgwY")
+                                    .child("temp").setValue(wantedTemp);
+                        }
+                        break;
+                        case "sera2":
+                        {
+                            mDatabase.child("istenen_sicaklik").child("-MQb_mCgwR76f6XOa7Fx")
+                                    .child("temp").setValue(wantedTemp);
+                        }
+                        break;
+                        case "sera3":
+                        {
+                            mDatabase.child("istenen_sicaklik").child("-MQbeuDh7a-1khe56FRP")
+                                    .child("temp").setValue(wantedTemp);
+                        }
+                        break;
+                        default:
+                            break;
+
+                    }
+                }
+            });
+
+
+
+
+
+            if(getIntent().getStringExtra("sera").equals("Sera 1")){
+                update = mDatabase.child("sera1");
+            } else if (getIntent().getStringExtra("sera").equals("Sera 2")) {
+                update = mDatabase.child("sera2");
+            } else if (getIntent().getStringExtra("sera").equals("Sera 3")) {
+                update = mDatabase.child("sera3");
+            }
+
+        update.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+
+                String jsonString = snapshot.getValue().toString();
+                JSONObject obj = null;
+                try {
+                    obj = new JSONObject(jsonString);
+                        if(valueList.size() > 10){
+                            valueList.remove(0);
+                        }
+                        valueList.add(Double.parseDouble(obj.getString("sicaklik")));
+                        getSetData();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
+
+            seekBar = findViewById(R.id.tempSeekBar);
 
         chart = findViewById(R.id.chart1);
 
@@ -72,7 +246,6 @@ public class DetailActivity extends AppCompatActivity implements OnChartGestureL
         // if disabled, scaling can be done on x- and y-axis separately
         chart.setPinchZoom(false);
 
-        getSetData();
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
@@ -97,6 +270,8 @@ public class DetailActivity extends AppCompatActivity implements OnChartGestureL
 
     }
 
+
+
     private final int[] colors = new int[] {
             ColorTemplate.VORDIPLOM_COLORS[0],
             ColorTemplate.VORDIPLOM_COLORS[1],
@@ -120,6 +295,10 @@ public class DetailActivity extends AppCompatActivity implements OnChartGestureL
             ArrayList<ILineDataSet> dataSets = new ArrayList<>();
 
             //ilerleme datası
+
+
+
+
             ArrayList<Entry> values = new ArrayList<>();
 
             for (int i = 0; i < valueList.size(); i++) {

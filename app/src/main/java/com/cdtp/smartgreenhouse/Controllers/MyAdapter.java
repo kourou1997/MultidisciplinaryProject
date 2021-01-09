@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cdtp.smartgreenhouse.R;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+
 //Listeyi oluşturacak class
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
@@ -56,6 +58,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
                 intent.putExtra("sera_detail", sera_descriptions[position]);
                 intent.putExtra("image", images[position]);
                 intent.putExtra("temperature", temperatures[position]);
+                intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             }
         });
