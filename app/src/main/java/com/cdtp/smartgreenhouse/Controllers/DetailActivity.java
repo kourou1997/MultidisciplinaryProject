@@ -251,7 +251,8 @@ public class DetailActivity extends AppCompatActivity implements OnChartGestureL
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                temperature.setText(""+i+".0°C");
+                i = i + 25;
+                temperature.setText(""+ i +".0°C");
                 //TODO: Change temperature globally when the button is pressed.
             }
 
@@ -285,7 +286,7 @@ public class DetailActivity extends AppCompatActivity implements OnChartGestureL
             description.setText(getIntent().getStringExtra("sera_detail"));
             //image.setImageResource(getIntent().getIntExtra("image", 1));
             temperature.setText(""+ getIntent().getDoubleExtra("temperature", 25.0) + "°C");
-            seekBar.setProgress((int)getIntent().getDoubleExtra("temperature", 25.0));
+            seekBar.setProgress((int)(getIntent().getDoubleExtra("temperature", 25.0) - 25));
 
             chart.resetTracking();
 

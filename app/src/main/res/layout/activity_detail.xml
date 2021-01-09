@@ -50,7 +50,7 @@
         android:layout_width="313dp"
         android:layout_height="39dp"
         android:layout_marginTop="112dp"
-        android:max="50"
+        android:max="35"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/detailSeraPropertiesTextView" />
