@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cdtp.smartgreenhouse.R;
+import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -142,18 +143,21 @@ public class DetailActivity extends AppCompatActivity implements OnChartGestureL
                         {
                             mDatabase.child("istenen_sicaklik").child("-MQbYfmvGT9Vu1bxxgwY")
                                     .child("temp").setValue(wantedTemp);
+                            getSetData();
                         }
                         break;
                         case "sera2":
                         {
                             mDatabase.child("istenen_sicaklik").child("-MQb_mCgwR76f6XOa7Fx")
                                     .child("temp").setValue(wantedTemp);
+                            getSetData();
                         }
                         break;
                         case "sera3":
                         {
                             mDatabase.child("istenen_sicaklik").child("-MQbeuDh7a-1khe56FRP")
                                     .child("temp").setValue(wantedTemp);
+                            getSetData();
                         }
                         break;
                         default:
@@ -217,9 +221,7 @@ public class DetailActivity extends AppCompatActivity implements OnChartGestureL
             }
         });
 
-
-
-            seekBar = findViewById(R.id.tempSeekBar);
+        seekBar = findViewById(R.id.tempSeekBar);
 
         chart = findViewById(R.id.chart1);
 
@@ -235,8 +237,11 @@ public class DetailActivity extends AppCompatActivity implements OnChartGestureL
         chart.getAxisRight().setDrawGridLines(false);
         chart.getXAxis().setDrawAxisLine(false);
         chart.getXAxis().setDrawGridLines(false);
+        chart.animateX(500, Easing.EaseOutBack);
+        chart.animateY(500, Easing.EaseOutBack);
 
-        // enable touch gestures
+
+            // enable touch gestures
         chart.setTouchEnabled(true);
 
         // enable scaling and dragging
@@ -245,6 +250,9 @@ public class DetailActivity extends AppCompatActivity implements OnChartGestureL
 
         // if disabled, scaling can be done on x- and y-axis separately
         chart.setPinchZoom(false);
+
+        temperature.setText(""+ getIntent().getDoubleExtra("temperature", 25.0) + "°C");
+        seekBar.setProgress((int)(getIntent().getDoubleExtra("temperature", 25.0) - 25));
 
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -279,14 +287,15 @@ public class DetailActivity extends AppCompatActivity implements OnChartGestureL
             ColorTemplate.VORDIPLOM_COLORS[2]
     };
 
+
+
     private void getSetData(){
         //intentin dolu olup olmadığını kontrol ediyoruz
         if(getIntent().hasExtra("image") && getIntent().hasExtra("sera") && getIntent().hasExtra("sera_detail")){
             title.setText(getIntent().getStringExtra("sera"));
             description.setText(getIntent().getStringExtra("sera_detail"));
             //image.setImageResource(getIntent().getIntExtra("image", 1));
-            temperature.setText(""+ getIntent().getDoubleExtra("temperature", 25.0) + "°C");
-            seekBar.setProgress((int)(getIntent().getDoubleExtra("temperature", 25.0) - 25));
+
 
             chart.resetTracking();
 
